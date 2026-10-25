@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">FocusWellbeing</string>
+    <string name="app_blocker_service_description">Required for Focus Mode. Detects frozen apps and blocks them with a shield so you stay focused.</string>
+</resources>
