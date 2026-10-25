@@ -6,7 +6,7 @@ import android.content.Intent
 import android.os.Build
 import android.os.Process
 import android.provider.Settings
-
+@Suppress("DEPRECATION")
 class UsageActivityPermission {
      fun hasUsageStatsPermission(context: Context): Boolean {
         val appOps = context.getSystemService(Context.APP_OPS_SERVICE) as AppOpsManager
@@ -17,7 +17,6 @@ class UsageActivityPermission {
                 context.packageName
             )
         } else {
-            @Suppress("DEPRECATION")
             appOps.checkOpNoThrow(
                 AppOpsManager.OPSTR_GET_USAGE_STATS,
                 Process.myUid(),

@@ -1,6 +1,7 @@
 package com.example.focuswellbeing.utils
 
 import android.content.Context
+import kotlinx.coroutines.flow.update
 
 /**
  * Persists frozen package names so both the UI and [AppBlockerService]
@@ -34,7 +35,6 @@ object FrozenAppsStore {
         setFrozenApps(context, updated)
         return updated
     }
-
     fun isFrozen(context: Context, packageName: String): Boolean =
         getFrozenApps(context).contains(packageName)
 }

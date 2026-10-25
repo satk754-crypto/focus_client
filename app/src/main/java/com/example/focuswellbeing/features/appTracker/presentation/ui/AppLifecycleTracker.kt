@@ -1,4 +1,4 @@
-package com.example.focuswellbeing.features.AppLifecycleTracker.presentation.ui
+package com.example.focuswellbeing.features.appTracker.presentation.ui
 
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner

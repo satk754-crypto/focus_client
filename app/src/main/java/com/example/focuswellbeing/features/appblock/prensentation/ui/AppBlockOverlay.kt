@@ -1,4 +1,4 @@
-package com.example.focuswellbeing.features.dashboard.ui.presentation
+package com.example.focuswellbeing.features.appblock.prensentation.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*

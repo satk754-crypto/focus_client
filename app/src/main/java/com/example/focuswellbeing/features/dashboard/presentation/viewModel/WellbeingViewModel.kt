@@ -1,6 +1,5 @@
 package com.example.focuswellbeing.features.dashboard.presentation.viewModel
 
-import android.app.AppOpsManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -8,8 +7,6 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
-import android.os.Build
-import android.os.Process
 import android.provider.Settings
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
@@ -19,6 +16,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.focuswellbeing.features.dashboard.model.AppUsageItemUi
 import com.example.focuswellbeing.utils.AccessibilityPermission
 import com.example.focuswellbeing.utils.FrozenAppsStore
+import com.example.focuswellbeing.utils.usage.UsageActivityPermission
 import com.example.focuswellbeing.utils.usage.queryAppForegroundUsage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -49,26 +47,15 @@ fun Drawable.toComposeImageBitmap(width: Int = 120, height: Int = 120): ImageBit
     return bitmap.asImageBitmap()
 }
 
-data class AnalyticsUiState(
-    val hasPermission: Boolean = false,
-    val selectedTab: Int = 0,
-    val primaryMetricTitle: String = "Daily Average Screen Time",
-    val primaryMetricValue: String = "3h 48m",
-    val trendDescription: String = "-14% vs previous week",
-    val chartData: List<ChartBarModel> = emptyList(),
-    val topUsedApps: List<AppUsageItemUi> = emptyList(),
-    val focusScore: Int = 89,
-    val frozenAppsMap: Set<String> = emptySet() // Stores
-)
-
 class WellbeingViewModel : ViewModel() {
+    val accessibilityPermission = UsageActivityPermission()
 
     private val _uiState = MutableStateFlow(AnalyticsUiState())
     val uiState: StateFlow<AnalyticsUiState> = _uiState.asStateFlow()
 
     fun checkPermissionAndFetchData(context: Context) {
         val appContext = context.applicationContext
-        val granted = hasUsageStatsPermission(appContext)
+        val granted = accessibilityPermission.hasUsageStatsPermission(appContext)
         _uiState.update {
             it.copy(
                 hasPermission = granted,
@@ -93,28 +80,10 @@ class WellbeingViewModel : ViewModel() {
         context.startActivity(Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS))
     }
 
-    private fun hasUsageStatsPermission(context: Context): Boolean {
-        val appOps = context.getSystemService(Context.APP_OPS_SERVICE) as AppOpsManager
-        val mode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            appOps.unsafeCheckOpNoThrow(
-                AppOpsManager.OPSTR_GET_USAGE_STATS,
-                Process.myUid(),
-                context.packageName
-            )
-        } else {
-            @Suppress("DEPRECATION")
-            appOps.checkOpNoThrow(
-                AppOpsManager.OPSTR_GET_USAGE_STATS,
-                Process.myUid(),
-                context.packageName
-            )
-        }
-        return mode == AppOpsManager.MODE_ALLOWED
-    }
 
     private fun loadAnalyticsForTab(context: Context, tabIndex: Int) {
         viewModelScope.launch {
-            val hasPermission = hasUsageStatsPermission(context)
+            val hasPermission = accessibilityPermission.hasUsageStatsPermission(context)
             val endTime = System.currentTimeMillis()
             val startTime = rangeStartMillis(tabIndex)
 
@@ -252,6 +221,7 @@ class WellbeingViewModel : ViewModel() {
             )
         }
     }
+
     /**
      * Freezes or unfreezes [packageName]. When freezing, prompts for the
      * Accessibility service if it is not enabled — that service is required

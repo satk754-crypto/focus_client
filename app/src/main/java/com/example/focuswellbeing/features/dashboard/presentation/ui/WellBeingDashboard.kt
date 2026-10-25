@@ -15,15 +15,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.AccessibilityManager
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.example.focuswellbeing.features.dashboard.components.ActivateFocusCard
 import com.example.focuswellbeing.features.dashboard.components.VisualAnalytics
 import com.example.focuswellbeing.features.dashboard.presentation.viewModel.WellbeingViewModel
+import com.example.focuswellbeing.utils.usage.UsageActivityPermission
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -34,7 +37,7 @@ fun WellBeingDashboard(
 ) {
     val state by viewModel.uiState.collectAsState()
     val tabs = listOf("Daily", "Weekly", "Monthly")
-    val lifecycleOwner = LocalLifecycleOwner.current
+    val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
 
     // Reload when returning from Usage Access settings (or any resume).
     DisposableEffect(lifecycleOwner) {
@@ -46,29 +49,10 @@ fun WellBeingDashboard(
         lifecycleOwner.lifecycle.addObserver(observer)
         onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
     }
-
-    val maxVal = state.chartData.maxOfOrNull { it.hours } ?: 1f
-
     Scaffold(
         topBar = {
             TopAppBar(
                 title = { Text("Analytics Suite", fontWeight = FontWeight.Bold, fontSize = 16.sp) },
-                navigationIcon = {
-                    TextButton(onClick = onBackClick) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(4.dp)
-                        ) {
-                            Text("←", fontSize = 16.sp, color = MaterialTheme.colorScheme.primary)
-                            Text(
-                                "Dashboard",
-                                fontSize = 14.sp,
-                                color = MaterialTheme.colorScheme.primary,
-                                fontWeight = FontWeight.Bold
-                            )
-                        }
-                    }
-                },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.background
                 )
@@ -121,13 +105,9 @@ fun WellBeingDashboard(
                     }
                 }
             }
-//
 
-            // INTEGRATED VISUAL ANALYTICS & TREND SUMMARY CARD
             VisualAnalytics(state)
             ActivateFocusCard(state, viewModel)
-            // TOP USED APPLICATIONS CARD
-//            TopUsedApplicationCard(viewModel, context, state)
 
         }
     }

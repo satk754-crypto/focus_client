@@ -10,7 +10,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.ui.Modifier
-import com.example.focuswellbeing.features.dashboard.ui.presentation.AppBlockOverlay
+import com.example.focuswellbeing.features.appblock.prensentation.ui.AppBlockOverlay
 import com.example.focuswellbeing.utils.FrozenAppsStore
 
 class ShieldActivity : ComponentActivity() {
