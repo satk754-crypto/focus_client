@@ -1,6 +1,5 @@
 package com.example.focuswellbeing.features.dashboard.presentation.ui
 
-
 import android.content.Context
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -9,24 +8,27 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.AccessibilityManager
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
-import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.example.focuswellbeing.features.dashboard.components.ActivateFocusCard
 import com.example.focuswellbeing.features.dashboard.components.VisualAnalytics
 import com.example.focuswellbeing.features.dashboard.presentation.viewModel.WellbeingViewModel
-import com.example.focuswellbeing.utils.usage.UsageActivityPermission
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -36,8 +38,12 @@ fun WellBeingDashboard(
     onBackClick: () -> Unit
 ) {
     val state by viewModel.uiState.collectAsState()
-    val tabs = listOf("Daily", "Weekly", "Monthly")
+    val tabs = listOf("Daily", "Weekly") // Restrict tabs to Daily and Weekly
     val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
+
+    // Date picker state dialog visibility
+    var showDatePicker by remember { mutableStateOf(false) }
+    var selectedMonthOffset by remember { mutableStateOf(0) }
 
     // Reload when returning from Usage Access settings (or any resume).
     DisposableEffect(lifecycleOwner) {
@@ -49,6 +55,36 @@ fun WellBeingDashboard(
         lifecycleOwner.lifecycle.addObserver(observer)
         onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
     }
+
+    // Material 3 Date Picker Dialog for Daily tab custom calendar selection
+    if (showDatePicker) {
+        val datePickerState = rememberDatePickerState(
+            initialSelectedDateMillis = System.currentTimeMillis()
+        )
+        DatePickerDialog(
+            onDismissRequest = { showDatePicker = false },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        datePickerState.selectedDateMillis?.let { millis ->
+                            viewModel.updateDailyAnchor(context, millis)
+                        }
+                        showDatePicker = false
+                    }
+                ) {
+                    Text("Confirm")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDatePicker = false }) {
+                    Text("Cancel")
+                }
+            }
+        ) {
+            DatePicker(state = datePickerState)
+        }
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -68,7 +104,7 @@ fun WellBeingDashboard(
                 .padding(horizontal = 20.dp, vertical = 12.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // Segmented Interactive Pill Tabs (Daily / Weekly / Monthly)
+            // Segmented Interactive Pill Tabs (Daily / Weekly)
             Surface(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(16.dp),
@@ -106,9 +142,54 @@ fun WellBeingDashboard(
                 }
             }
 
+            // Sub-Filter Header Controls (Calendar Picker or Week Offset Switcher)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                when (state.selectedTab) {
+                    0 -> {
+                        // Daily view: Calendar Button
+                        OutlinedButton(
+                            onClick = { showDatePicker = true },
+                            shape = RoundedCornerShape(12.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.DateRange,
+                                contentDescription = "Pick Date",
+                                modifier = Modifier.size(18.dp)
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text("Choose Date", fontSize = 13.sp)
+                        }
+                    }
+                    else -> {
+                        // Weekly view: Month/Week range selector switcher
+                        val cal = Calendar.getInstance().apply { add(Calendar.MONTH, selectedMonthOffset) }
+                        val monthLabel = SimpleDateFormat("MMMM yyyy", Locale.getDefault()).format(cal.time)
+
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            IconButton(onClick = {
+                                selectedMonthOffset--
+                                viewModel.shiftWeeklyOffset(context, -1)
+                            }) {
+                                Icon(Icons.Default.KeyboardArrowLeft, contentDescription = "Previous Period")
+                            }
+                            Text(monthLabel, fontWeight = FontWeight.SemiBold, fontSize = 14.sp)
+                            IconButton(onClick = {
+                                selectedMonthOffset++
+                                viewModel.shiftWeeklyOffset(context, 1)
+                            }) {
+                                Icon(Icons.Default.KeyboardArrowRight, contentDescription = "Next Period")
+                            }
+                        }
+                    }
+                }
+            }
+
             VisualAnalytics(state)
             ActivateFocusCard(state, viewModel)
-
         }
     }
 }

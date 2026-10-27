@@ -13,3 +13,9 @@ data class AnalyticsUiState(
     val focusScore: Int = 89,
     val frozenAppsMap: Set<String> = emptySet() // Stores
 )
+
+data class ChartBarModel(
+    val label: String,
+    val hours: Float,
+    val formattedTime: String
+)

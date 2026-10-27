@@ -26,7 +26,9 @@ class UsageActivityPermission {
         return mode == AppOpsManager.MODE_ALLOWED
     }
     fun requestUsageStatsPermission(context: Context) {
-        val intent = Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS)
+        val intent = Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        }
         context.startActivity(intent)
     }
 }
