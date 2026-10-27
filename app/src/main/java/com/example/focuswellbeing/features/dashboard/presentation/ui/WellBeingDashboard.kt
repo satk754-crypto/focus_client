@@ -83,15 +83,12 @@ fun WellBeingDashboard(
                 }
             }
         ) {
+            // Material 3 Date Picker Dialog for Daily tab custom calendar selection (restricted up to today)
             if (showDatePicker) {
-                // 1. Put selectableDates here inside rememberDatePickerState
+                // Use the current anchor millis from your view model/state as the initial selection
                 val datePickerState = rememberDatePickerState(
-                    initialSelectedDateMillis = System.currentTimeMillis(),
-                    selectableDates = object : SelectableDates {
-                        override fun isSelectableDate(utcTimeMillis: Long): Boolean {
-                            return utcTimeMillis <= System.currentTimeMillis()
-                        }
-                    }
+                    initialSelectedDateMillis = state.selectedDailyAnchorMillis, // <-- Update this line to use your current date state
+                    yearRange = 2020..(Calendar.getInstance().get(Calendar.YEAR))
                 )
 
                 DatePickerDialog(
@@ -116,7 +113,6 @@ fun WellBeingDashboard(
                         }
                     }
                 ) {
-                    // 2. Just pass the state here cleanly without dateValidator!
                     DatePicker(state = datePickerState)
                 }
             }
@@ -188,7 +184,6 @@ fun WellBeingDashboard(
             ) {
                 when (state.selectedTab) {
                     0 -> {
-                        // Daily view: Calendar Button
                         OutlinedButton(
                             onClick = { showDatePicker = true },
                             shape = RoundedCornerShape(12.dp)
@@ -199,7 +194,7 @@ fun WellBeingDashboard(
                                 modifier = Modifier.size(18.dp)
                             )
                             Spacer(modifier = Modifier.width(8.dp))
-                            Text("Choose Date", fontSize = 13.sp)
+                            Text(state.formattedDailyDate, fontSize = 13.sp) // Clean and formatted in ViewModel!
                         }
                     }
                     else -> {

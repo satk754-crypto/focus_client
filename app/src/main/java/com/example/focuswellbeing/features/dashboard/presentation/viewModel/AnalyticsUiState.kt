@@ -11,7 +11,9 @@ data class AnalyticsUiState(
     val chartData: List<ChartBarModel> = emptyList(),
     val topUsedApps: List<AppUsageItemUi> = emptyList(),
     val focusScore: Int = 89,
-    val frozenAppsMap: Set<String> = emptySet() // Stores
+    val frozenAppsMap: Set<String> = emptySet() ,
+    val selectedDailyAnchorMillis: Long = System.currentTimeMillis(),
+    val formattedDailyDate: String = ""
 )
 
 data class ChartBarModel(

@@ -17,6 +17,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class WellbeingViewModel : ViewModel() {
 
@@ -81,6 +83,8 @@ class WellbeingViewModel : ViewModel() {
     }
 
     private fun loadAnalyticsForTab(context: Context, tabIndex: Int) {
+        val dateFormat = SimpleDateFormat("MMM dd, yyyy", Locale.getDefault())
+        val dateString = dateFormat.format(selectedDailyAnchorMillis)
         viewModelScope.launch {
             try {
                 val appContext = context.applicationContext
@@ -129,6 +133,8 @@ class WellbeingViewModel : ViewModel() {
 
                 _uiState.update {
                     it.copy(
+                        selectedDailyAnchorMillis = selectedDailyAnchorMillis,
+                        formattedDailyDate = dateString,
                         hasPermission = hasPermission,
                         selectedTab = tabIndex,
                         primaryMetricTitle = metrics?.first ?: "",
