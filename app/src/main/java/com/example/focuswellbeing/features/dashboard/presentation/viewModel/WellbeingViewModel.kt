@@ -55,13 +55,22 @@ class WellbeingViewModel : ViewModel() {
 
     fun updateDailyAnchor(context: Context, millis: Long) {
         if (millis <= 0) return
-        selectedDailyAnchorMillis = millis
+
+        // Prevent selecting a future date beyond current time
+        val currentTime = System.currentTimeMillis()
+        val validMillis = if (millis > currentTime) currentTime else millis
+
+        selectedDailyAnchorMillis = validMillis
         loadAnalyticsForTab(context.applicationContext, 0)
     }
 
     fun shiftWeeklyOffset(context: Context, delta: Int) {
-        selectedWeeklyOffset += delta
-        loadAnalyticsForTab(context.applicationContext, 1)
+        // Prevent shifting into future weeks (offset > 0 means future)
+        val newOffset = selectedWeeklyOffset + delta
+        if (newOffset <= 0) {
+            selectedWeeklyOffset = newOffset
+            loadAnalyticsForTab(context.applicationContext, 1)
+        }
     }
 
     fun openUsageAccessSettings(context: Context) {
@@ -141,7 +150,6 @@ class WellbeingViewModel : ViewModel() {
         val wasFrozen = FrozenAppsStore.isFrozen(appContext, packageName)
         val updatedSet = FrozenAppsStore.toggle(appContext, packageName)
         _uiState.update { it.copy(frozenAppsMap = updatedSet) }
-
         if (!wasFrozen && updatedSet.contains(packageName) &&
             !AccessibilityPermission.isAppBlockerEnabled(appContext)
         ) {

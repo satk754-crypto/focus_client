@@ -38,10 +38,10 @@ fun WellBeingDashboard(
     onBackClick: () -> Unit
 ) {
     val state by viewModel.uiState.collectAsState()
-    val tabs = listOf("Daily", "Weekly") // Restrict tabs to Daily and Weekly
+    val tabs = listOf("Daily", "Weekly")
     val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
 
-    // Date picker state dialog visibility
+    // Date picker state dialog visibility & offset controls
     var showDatePicker by remember { mutableStateOf(false) }
     var selectedMonthOffset by remember { mutableStateOf(0) }
 
@@ -56,7 +56,7 @@ fun WellBeingDashboard(
         onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
     }
 
-    // Material 3 Date Picker Dialog for Daily tab custom calendar selection
+    // Material 3 Date Picker Dialog for Daily tab custom calendar selection (restricted up to today)
     if (showDatePicker) {
         val datePickerState = rememberDatePickerState(
             initialSelectedDateMillis = System.currentTimeMillis()
@@ -67,7 +67,9 @@ fun WellBeingDashboard(
                 TextButton(
                     onClick = {
                         datePickerState.selectedDateMillis?.let { millis ->
-                            viewModel.updateDailyAnchor(context, millis)
+                            val currentTime = System.currentTimeMillis()
+                            val validMillis = if (millis > currentTime) currentTime else millis
+                            viewModel.updateDailyAnchor(context, validMillis)
                         }
                         showDatePicker = false
                     }
@@ -81,7 +83,43 @@ fun WellBeingDashboard(
                 }
             }
         ) {
-            DatePicker(state = datePickerState)
+            if (showDatePicker) {
+                // 1. Put selectableDates here inside rememberDatePickerState
+                val datePickerState = rememberDatePickerState(
+                    initialSelectedDateMillis = System.currentTimeMillis(),
+                    selectableDates = object : SelectableDates {
+                        override fun isSelectableDate(utcTimeMillis: Long): Boolean {
+                            return utcTimeMillis <= System.currentTimeMillis()
+                        }
+                    }
+                )
+
+                DatePickerDialog(
+                    onDismissRequest = { showDatePicker = false },
+                    confirmButton = {
+                        TextButton(
+                            onClick = {
+                                datePickerState.selectedDateMillis?.let { millis ->
+                                    val currentTime = System.currentTimeMillis()
+                                    val validMillis = if (millis > currentTime) currentTime else millis
+                                    viewModel.updateDailyAnchor(context, validMillis)
+                                }
+                                showDatePicker = false
+                            }
+                        ) {
+                            Text("Confirm")
+                        }
+                    },
+                    dismissButton = {
+                        TextButton(onClick = { showDatePicker = false }) {
+                            Text("Cancel")
+                        }
+                    }
+                ) {
+                    // 2. Just pass the state here cleanly without dateValidator!
+                    DatePicker(state = datePickerState)
+                }
+            }
         }
     }
 
@@ -142,7 +180,7 @@ fun WellBeingDashboard(
                 }
             }
 
-            // Sub-Filter Header Controls (Calendar Picker or Week Offset Switcher)
+            // Sub-Filter Header Controls (Calendar Picker or Week Offset Switcher with strict future restriction)
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -165,9 +203,15 @@ fun WellBeingDashboard(
                         }
                     }
                     else -> {
-                        // Weekly view: Month/Week range selector switcher
-                        val cal = Calendar.getInstance().apply { add(Calendar.MONTH, selectedMonthOffset) }
-                        val monthLabel = SimpleDateFormat("MMMM yyyy", Locale.getDefault()).format(cal.time)
+                        // Weekly view: Range selector switcher with strict month comparison
+                        val targetCalendar = Calendar.getInstance().apply { add(Calendar.MONTH, selectedMonthOffset) }
+                        val monthLabel = SimpleDateFormat("MMMM yyyy", Locale.getDefault()).format(targetCalendar.time)
+
+                        // Check if the target month is strictly before the current month/year
+                        val currentCalendar = Calendar.getInstance()
+                        val canGoForward = targetCalendar.get(Calendar.YEAR) < currentCalendar.get(Calendar.YEAR) ||
+                                (targetCalendar.get(Calendar.YEAR) == currentCalendar.get(Calendar.YEAR) &&
+                                        targetCalendar.get(Calendar.MONTH) < currentCalendar.get(Calendar.MONTH))
 
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             IconButton(onClick = {
@@ -176,12 +220,23 @@ fun WellBeingDashboard(
                             }) {
                                 Icon(Icons.Default.KeyboardArrowLeft, contentDescription = "Previous Period")
                             }
+
                             Text(monthLabel, fontWeight = FontWeight.SemiBold, fontSize = 14.sp)
-                            IconButton(onClick = {
-                                selectedMonthOffset++
-                                viewModel.shiftWeeklyOffset(context, 1)
-                            }) {
-                                Icon(Icons.Default.KeyboardArrowRight, contentDescription = "Next Period")
+
+                            IconButton(
+                                onClick = {
+                                    if (canGoForward) {
+                                        selectedMonthOffset++
+                                        viewModel.shiftWeeklyOffset(context, 1)
+                                    }
+                                },
+                                enabled = canGoForward
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.KeyboardArrowRight,
+                                    contentDescription = "Next Period",
+                                    tint = if (canGoForward) LocalContentColor.current else LocalContentColor.current.copy(alpha = 0.38f)
+                                )
                             }
                         }
                     }
