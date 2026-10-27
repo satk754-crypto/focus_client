@@ -13,7 +13,10 @@ data class AnalyticsUiState(
     val focusScore: Int = 89,
     val frozenAppsMap: Set<String> = emptySet() ,
     val selectedDailyAnchorMillis: Long = System.currentTimeMillis(),
-    val formattedDailyDate: String = ""
+    val formattedDailyDate: String = "",
+    // 👉 NEW FOCUS TIMER STATES:
+    val isFocusActive: Boolean = false,
+    val focusTimeRemainingSeconds: Int = 0
 )
 
 data class ChartBarModel(

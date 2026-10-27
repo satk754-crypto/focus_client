@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.focuswellbeing.features.dashboard.domain.WellBeingUseCase
 import com.example.focuswellbeing.utils.AccessibilityPermission
+import com.example.focuswellbeing.utils.FocusModeUtil
 import com.example.focuswellbeing.utils.FrozenAppsStore
 import com.example.focuswellbeing.utils.usage.UsageActivityPermission
 import com.example.focuswellbeing.utils.usage.queryAppForegroundUsage
@@ -160,6 +161,45 @@ class WellbeingViewModel : ViewModel() {
             !AccessibilityPermission.isAppBlockerEnabled(appContext)
         ) {
             AccessibilityPermission.openAccessibilitySettings(appContext)
+        }
+    }
+    fun startDeepFocusMode(context: Context) {
+        val appContext = context.applicationContext
+
+        // Get your own application's package name dynamically
+        val selfPackageName = appContext.packageName
+
+        // Map apps to lock, but EXCLUDE your own app package name!
+        val appsToLock = _uiState.value.topUsedApps
+            .map { it.packageName }
+            .filter { it != selfPackageName } // <-- Prevents locking your own app
+
+        // Trigger utility logic
+        FocusModeUtil.startDeepFocus(appContext, appsToLock)
+
+        val updatedFrozenMap = FrozenAppsStore.getFrozenApps(appContext)
+        _uiState.update {
+            it.copy(
+                isFocusActive = true,
+                frozenAppsMap = updatedFrozenMap
+            )
+        }
+
+        if (!AccessibilityPermission.isAppBlockerEnabled(appContext)) {
+            AccessibilityPermission.openAccessibilitySettings(appContext)
+        }
+    }
+    fun stopDeepFocusMode(context: Context) {
+        val appContext = context.applicationContext
+        FocusModeUtil.stopDeepFocus(appContext)
+
+        val updatedFrozenMap = FrozenAppsStore.getFrozenApps(appContext)
+
+        _uiState.update {
+            it.copy(
+                isFocusActive = false,
+                frozenAppsMap = updatedFrozenMap
+            )
         }
     }
 }
