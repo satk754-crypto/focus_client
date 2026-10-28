@@ -23,7 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.focuswellbeing.ui.theme.FocusBlue
+import com.example.focuswellbeing.ui.theme.IndigoPrimary
 
 @Composable
 fun FocusSessionBanner(
@@ -51,7 +51,7 @@ fun FocusSessionBanner(
         shape = RoundedCornerShape(20.dp),
         colors = CardDefaults.cardColors(
             containerColor = if (isFocusActive) {
-                FocusBlue.copy(alpha = 0.15f)
+                IndigoPrimary.copy(alpha = 0.15f)
             } else {
                 MaterialTheme.colorScheme.surface
             }
@@ -92,7 +92,7 @@ fun FocusSessionBanner(
                         text = "%02d:%02d".format(minutes, seconds),
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.ExtraBold,
-                        color = FocusBlue
+                        color = IndigoPrimary
                     )
                 }
             }
@@ -121,7 +121,7 @@ fun FocusSessionBanner(
                     containerColor = if (isFocusActive) {
                         MaterialTheme.colorScheme.error
                     } else {
-                        FocusBlue
+                        IndigoPrimary
                     }
                 )
             ) {

@@ -29,7 +29,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import com.example.focuswellbeing.ui.theme.FocusBlue
+import com.example.focuswellbeing.ui.theme.IndigoPrimary
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -84,7 +84,7 @@ fun FocusDurationSelectionBottomSheet(
                     text = "🎯  Deep Focus",
                     style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Bold,
-                    color = FocusBlue
+                    color = IndigoPrimary
                 )
 
                 Text(
@@ -121,7 +121,7 @@ fun FocusDurationSelectionBottomSheet(
                             },
                             shape = RoundedCornerShape(12.dp),
                             colors = FilterChipDefaults.filterChipColors(
-                                selectedContainerColor = FocusBlue,
+                                selectedContainerColor = IndigoPrimary,
                                 selectedLabelColor = Color.White,
                                 containerColor = MaterialTheme
                                     .colorScheme.surface,
@@ -134,7 +134,7 @@ fun FocusDurationSelectionBottomSheet(
                                         selectedMinutes == minutes,
                                 borderColor = MaterialTheme.colorScheme
                                     .outlineVariant,
-                                selectedBorderColor = FocusBlue
+                                selectedBorderColor = IndigoPrimary
                             )
                         )
                     }
@@ -173,9 +173,9 @@ fun FocusDurationSelectionBottomSheet(
                 shape = RoundedCornerShape(12.dp),
                 isError = isCustomEntered && !isValidDuration,
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = FocusBlue,
-                    focusedLabelColor = FocusBlue,
-                    cursorColor = FocusBlue
+                    focusedBorderColor = IndigoPrimary,
+                    focusedLabelColor = IndigoPrimary,
+                    cursorColor = IndigoPrimary
                 )
             )
 
@@ -189,9 +189,9 @@ fun FocusDurationSelectionBottomSheet(
                     .padding(top = 4.dp),
                 shape = RoundedCornerShape(12.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = FocusBlue,
+                    containerColor = IndigoPrimary,
                     contentColor = Color.White,
-                    disabledContainerColor = FocusBlue.copy(alpha = 0.35f),
+                    disabledContainerColor = IndigoPrimary.copy(alpha = 0.35f),
                     disabledContentColor = Color.White.copy(alpha = 0.8f)
                 )
             ) {
