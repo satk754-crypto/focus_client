@@ -14,6 +14,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.focuswellbeing.ui.theme.FocusBlue
 
 @Composable
 fun AppBlockOverlay(
@@ -48,7 +49,7 @@ fun AppBlockOverlay(
                     modifier = Modifier
                         .size(64.dp)
                         .clip(CircleShape)
-                        .background(Color(0xFF0EA5E9).copy(alpha = 0.15f)),
+                        .background(FocusBlue.copy(alpha = 0.15f)),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(text = "❄️", fontSize = 32.sp)
@@ -80,7 +81,7 @@ fun AppBlockOverlay(
                         .fillMaxWidth()
                         .height(50.dp),
                     shape = RoundedCornerShape(14.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF0EA5E9))
+                    colors = ButtonDefaults.buttonColors(containerColor = FocusBlue)
                 ) {
                     Text(
                         text = "Unfreeze & Open App",

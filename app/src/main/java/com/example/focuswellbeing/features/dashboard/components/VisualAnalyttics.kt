@@ -36,6 +36,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.focuswellbeing.features.dashboard.presentation.viewModel.AnalyticsUiState
+import com.example.focuswellbeing.ui.theme.*;
 
 @Composable
 fun VisualAnalytics(state: AnalyticsUiState) {
@@ -46,7 +47,7 @@ fun VisualAnalytics(state: AnalyticsUiState) {
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.75f)
         ),
-        border = BorderStroke(1.dp, Color.White.copy(alpha = 0.08f))
+        border = BorderStroke(1.dp, DividerSubtle)
     ) {
         Column(
             modifier = Modifier
@@ -77,8 +78,8 @@ fun VisualAnalytics(state: AnalyticsUiState) {
                     // Trend Pill
                     Surface(
                         shape = RoundedCornerShape(50.dp),
-                        color = Color(0xFF10B981).copy(alpha = 0.1f),
-                        border = BorderStroke(1.dp, Color(0xFF10B981).copy(alpha = 0.2f))
+                        color = SuccessGreen.copy(alpha = 0.1f),
+                        border = BorderStroke(1.dp, SuccessGreen.copy(alpha = 0.2f))
                     ) {
                         Row(
                             modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
@@ -89,7 +90,7 @@ fun VisualAnalytics(state: AnalyticsUiState) {
                             Text(
                                 text = state.trendDescription,
                                 style = MaterialTheme.typography.labelSmall,
-                                color = Color(0xFF34D399),
+                                color = SuccessGreenLight,
                                 fontWeight = FontWeight.Bold
                             )
                         }
@@ -98,7 +99,7 @@ fun VisualAnalytics(state: AnalyticsUiState) {
             }
 
             Spacer(modifier = Modifier.height(20.dp))
-            HorizontalDivider(color = Color.White.copy(alpha = 0.08f))
+            HorizontalDivider(color = DividerSubtle)
             Spacer(modifier = Modifier.height(16.dp))
 
             Row(
@@ -180,13 +181,13 @@ fun VisualAnalytics(state: AnalyticsUiState) {
                                     .background(
                                         if (isSelectedBar) {
                                             Brush.verticalGradient(
-                                                listOf(Color(0xFF818CF8), Color(0xFF4F46E5))
+                                                listOf(IndigoLight, IndigoPrimary)
                                             )
                                         } else {
                                             Brush.verticalGradient(
                                                 listOf(
-                                                    Color(0xFF4F46E5).copy(alpha = 0.7f),
-                                                    Color(0xFF312E81).copy(alpha = 0.7f)
+                                                    IndigoPrimary.copy(alpha = 0.7f),
+                                                    IndigoDark.copy(alpha = 0.7f)
                                                 )
                                             )
                                         }

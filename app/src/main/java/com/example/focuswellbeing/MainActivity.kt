@@ -13,8 +13,6 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.darkColorScheme
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -29,6 +27,7 @@ import com.example.focuswellbeing.features.auth.ui.LoginScreen
 import com.example.focuswellbeing.features.dashboard.presentation.ui.ShieldActivity
 import com.example.focuswellbeing.features.dashboard.presentation.ui.WellBeingDashboard
 import com.example.focuswellbeing.features.dashboard.presentation.viewModel.WellbeingViewModel
+import com.example.focuswellbeing.ui.theme.FocusWellbeingTheme
 import com.example.focuswellbeing.utils.AppMonitoringUtils
 class MainActivity : ComponentActivity() {
     val provider = DependencyProvider()
@@ -73,7 +72,7 @@ class MainActivity : ComponentActivity() {
                 onDispose { unregisterReceiver(receiver) }
             }
 
-            MaterialTheme(colorScheme = darkColorScheme()) {
+            FocusWellbeingTheme(darkTheme = true) {
                 if (authTokenState.value == null) {
                     LoginScreen(onGoogleSinSequence = { email ->
                         authViewModel.saveSession(

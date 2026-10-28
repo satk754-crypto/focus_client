@@ -8,9 +8,9 @@ import androidx.activity.addCallback
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.darkColorScheme
 import androidx.compose.ui.Modifier
 import com.example.focuswellbeing.features.appblock.prensentation.ui.AppBlockOverlay
+import com.example.focuswellbeing.ui.theme.FocusWellbeingTheme
 import com.example.focuswellbeing.utils.FrozenAppsStore
 
 class ShieldActivity : ComponentActivity() {
@@ -30,7 +30,7 @@ class ShieldActivity : ComponentActivity() {
         }
 
         setContent {
-            MaterialTheme(colorScheme = darkColorScheme()) {
+            FocusWellbeingTheme(darkTheme = true) {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background

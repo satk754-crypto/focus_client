@@ -31,8 +31,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import com.example.focuswellbeing.ui.theme.DividerSubtle
+import com.example.focuswellbeing.ui.theme.FocusBlue
+import com.example.focuswellbeing.ui.theme.FocusBlueLight
+import com.example.focuswellbeing.ui.theme.ProgressTrack
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -61,7 +64,7 @@ fun ActivateFocusCard(state: AnalyticsUiState, viewModel: WellbeingViewModel) {
                 alpha = 0.75f
             )
         ),
-        border = BorderStroke(1.dp, Color.White.copy(alpha = 0.08f))
+        border = BorderStroke(1.dp, DividerSubtle)
     ) {
         Column(
             modifier = Modifier
@@ -95,7 +98,7 @@ fun ActivateFocusCard(state: AnalyticsUiState, viewModel: WellbeingViewModel) {
                         .fillMaxWidth()
                         .clip(RoundedCornerShape(16.dp))
                         .background(
-                            if (isFrozen) Color(0xFF0EA5E9).copy(alpha = 0.12f)
+                            if (isFrozen) FocusBlue.copy(alpha = 0.12f)
                             else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f)
                         )
                         .padding(12.dp),
@@ -115,7 +118,7 @@ fun ActivateFocusCard(state: AnalyticsUiState, viewModel: WellbeingViewModel) {
                                 modifier = Modifier
                                     .size(42.dp)
                                     .clip(RoundedCornerShape(12.dp))
-                                    .background(if (isFrozen) Color(0xFF0EA5E9).copy(alpha = 0.2f) else MaterialTheme.colorScheme.surface),
+                                    .background(if (isFrozen) FocusBlue.copy(alpha = 0.2f) else MaterialTheme.colorScheme.surface),
                                 contentAlignment = Alignment.Center
                             ) {
                                 if (isFrozen) {
@@ -145,7 +148,7 @@ fun ActivateFocusCard(state: AnalyticsUiState, viewModel: WellbeingViewModel) {
                                     if (isFrozen) {
                                         Surface(
                                             shape = RoundedCornerShape(4.dp),
-                                            color = Color(0xFF0EA5E9).copy(alpha = 0.2f)
+                                            color = FocusBlue.copy(alpha = 0.2f)
                                         ) {
                                             Text(
                                                 text = "FROZEN",
@@ -155,7 +158,7 @@ fun ActivateFocusCard(state: AnalyticsUiState, viewModel: WellbeingViewModel) {
                                                 ),
                                                 fontSize = 8.sp,
                                                 fontWeight = FontWeight.Bold,
-                                                color = Color(0xFF38BDF8)
+                                                color = FocusBlueLight
                                             )
                                         }
                                     }
@@ -163,7 +166,7 @@ fun ActivateFocusCard(state: AnalyticsUiState, viewModel: WellbeingViewModel) {
                                 Text(
                                     text = if (isFrozen) "App locked & suspended" else app.formattedTime,
                                     style = MaterialTheme.typography.bodySmall,
-                                    color = if (isFrozen) Color(0xFF38BDF8) else MaterialTheme.colorScheme.onSurfaceVariant
+                                    color = if (isFrozen) FocusBlueLight else MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                             }
                         }
@@ -172,8 +175,8 @@ fun ActivateFocusCard(state: AnalyticsUiState, viewModel: WellbeingViewModel) {
                         Button(
                             onClick = { viewModel.toggleFreezeApp(context, app.packageName) },
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = if (isFrozen) Color(0xFF0EA5E9).copy(alpha = 0.2f) else MaterialTheme.colorScheme.surface,
-                                contentColor = if (isFrozen) Color(0xFF38BDF8) else Color(0xFF0EA5E9)
+                                containerColor = if (isFrozen) FocusBlue.copy(alpha = 0.2f) else MaterialTheme.colorScheme.surface,
+                                contentColor = if (isFrozen) FocusBlueLight else FocusBlue
                             ),
                             contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
                             modifier = Modifier.height(32.dp),
@@ -193,8 +196,8 @@ fun ActivateFocusCard(state: AnalyticsUiState, viewModel: WellbeingViewModel) {
                             .fillMaxWidth()
                             .height(6.dp)
                             .clip(RoundedCornerShape(3.dp)),
-                        color = if (isFrozen) Color(0xFF38BDF8) else app.accentColor,
-                        trackColor = Color(0xFF1E293B)
+                        color = if (isFrozen) FocusBlueLight else app.accentColor,
+                        trackColor = ProgressTrack
                     )
                 }
             }

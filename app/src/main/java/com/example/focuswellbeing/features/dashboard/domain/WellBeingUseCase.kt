@@ -6,11 +6,24 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import com.example.focuswellbeing.features.dashboard.model.AppUsageItemUi
 import com.example.focuswellbeing.features.dashboard.presentation.viewModel.ChartBarModel
+import com.example.focuswellbeing.ui.theme.AppAmber
+import com.example.focuswellbeing.ui.theme.AppBlue
+import com.example.focuswellbeing.ui.theme.AppCyan
+import com.example.focuswellbeing.ui.theme.AppCyanLight
+import com.example.focuswellbeing.ui.theme.AppEmerald
+import com.example.focuswellbeing.ui.theme.AppPink
+import com.example.focuswellbeing.ui.theme.AppPinkLight
+import com.example.focuswellbeing.ui.theme.AppPurple
+import com.example.focuswellbeing.ui.theme.AppRed
+import com.example.focuswellbeing.ui.theme.AppRose
+import com.example.focuswellbeing.ui.theme.AppRoseLight
+import com.example.focuswellbeing.ui.theme.AppTeal
+import com.example.focuswellbeing.ui.theme.FocusBlueLight
+import com.example.focuswellbeing.ui.theme.SuccessGreenLight
 import com.example.focuswellbeing.utils.usage.queryAppForegroundUsage
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -306,11 +319,11 @@ class WellBeingUseCase {
 
         val totalTopMillis = topUsage.sumOf { it.value }.coerceAtLeast(1L)
         val palette = listOf(
-            Triple(listOf(Color(0xFFF59E0B), Color(0xFFEC4899), Color(0xFF9333EA)), Color(0xFFF472B6), "📱"),
-            Triple(listOf(Color(0xFFDC2626), Color(0xFFF43F5E)), Color(0xFFF87171), "▶️"),
-            Triple(listOf(Color(0xFF06B6D4), Color(0xFFEC4899)), Color(0xFF22D3EE), "🎵"),
-            Triple(listOf(Color(0xFF059669), Color(0xFF2DD4BF)), Color(0xFF34D399), "💬"),
-            Triple(listOf(Color(0xFF2563EB), Color(0xFF38BDF8)), Color(0xFF38BDF8), "🌐")
+            Triple(listOf(AppAmber, AppPink, AppPurple), AppPinkLight, "📱"),
+            Triple(listOf(AppRed, AppRose), AppRoseLight, "▶️"),
+            Triple(listOf(AppCyan, AppPink), AppCyanLight, "🎵"),
+            Triple(listOf(AppEmerald, AppTeal), SuccessGreenLight, "💬"),
+            Triple(listOf(AppBlue, FocusBlueLight), FocusBlueLight, "🌐")
         )
 
         return topUsage.mapIndexed { index, (pkgName, fgMillis) ->

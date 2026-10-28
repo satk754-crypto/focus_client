@@ -27,6 +27,8 @@ import com.example.focuswellbeing.features.dashboard.components.ActivateFocusCar
 import com.example.focuswellbeing.features.dashboard.components.VisualAnalytics
 import com.example.focuswellbeing.features.dashboard.presentation.viewModel.WellbeingViewModel
 import com.example.focuswellbeing.features.focus.presentation.ui.FocusSessionBanner
+import com.example.focuswellbeing.ui.theme.DividerSubtle
+import com.example.focuswellbeing.ui.theme.IndigoPrimary
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -154,7 +156,7 @@ fun WellBeingDashboard(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(16.dp),
                 color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
-                border = BorderStroke(1.dp, Color.White.copy(alpha = 0.08f))
+                border = BorderStroke(1.dp, DividerSubtle)
             ) {
                 Row(
                     modifier = Modifier.padding(4.dp),
@@ -162,8 +164,7 @@ fun WellBeingDashboard(
                 ) {
                     tabs.forEachIndexed { index, title ->
                         val isSelected = state.selectedTab == index
-                        val tabBlue = Color(0xFF4F46E5)
-                        val backgroundColor = if (isSelected) tabBlue else Color.Transparent
+                        val backgroundColor = if (isSelected) IndigoPrimary else Color.Transparent
                         val textColor =
                             if (isSelected) Color.White else MaterialTheme.colorScheme.onSurfaceVariant
 
