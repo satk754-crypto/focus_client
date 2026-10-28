@@ -29,14 +29,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.focuswellbeing.features.dashboard.presentation.ui.DashboardDateFilterWidget
+import com.example.focuswellbeing.features.dashboard.presentation.viewModel.AnalyticsUiState
 import com.example.focuswellbeing.ui.theme.*;
 
 @Composable
