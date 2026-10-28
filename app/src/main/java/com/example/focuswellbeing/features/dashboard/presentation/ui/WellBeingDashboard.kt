@@ -24,9 +24,9 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import com.example.focuswellbeing.features.dashboard.components.ActivateFocusCard
-import com.example.focuswellbeing.features.focus.DeepFocusBanner
 import com.example.focuswellbeing.features.dashboard.components.VisualAnalytics
 import com.example.focuswellbeing.features.dashboard.presentation.viewModel.WellbeingViewModel
+import com.example.focuswellbeing.features.focus.presentation.ui.FocusSessionBanner
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -139,10 +139,15 @@ fun WellBeingDashboard(
                 .padding(horizontal = 20.dp, vertical = 12.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            DeepFocusBanner(
+            FocusSessionBanner(
                 isFocusActive = state.isFocusActive,
-                onStartClick = { viewModel.startDeepFocusMode(context) },
-                onStopClick = { viewModel.stopDeepFocusMode(context) }
+                remainingSeconds = state.focusTimeRemainingSeconds,
+                onStartFocus = { minutes ->
+                    viewModel.startFocusSession(minutes)
+                },
+                onStopFocus = {
+                    viewModel.stopDeepFocusMode(context);
+                }
             )
             // Segmented Interactive Pill Tabs (Daily / Weekly)
             Surface(

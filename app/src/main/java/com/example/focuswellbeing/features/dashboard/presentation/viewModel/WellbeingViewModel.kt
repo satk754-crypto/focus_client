@@ -163,32 +163,29 @@ class WellbeingViewModel : ViewModel() {
             AccessibilityPermission.openAccessibilitySettings(appContext)
         }
     }
-    fun startDeepFocusMode(context: Context) {
-        val appContext = context.applicationContext
+    // Inside your WellbeingViewModel.kt
+    private var focusTimerJob: kotlinx.coroutines.Job? = null
+    // 👉 Add custom duration support
+    fun startFocusSession(durationMinutes: Int) {
+        val totalSeconds = durationMinutes * 60
+        _uiState.update { it.copy(isFocusActive = true, focusTimeRemainingSeconds = totalSeconds) }
 
-        // Get your own application's package name dynamically
-        val selfPackageName = appContext.packageName
-
-        // Map apps to lock, but EXCLUDE your own app package name!
-        val appsToLock = _uiState.value.topUsedApps
-            .map { it.packageName }
-            .filter { it != selfPackageName } // <-- Prevents locking your own app
-
-        // Trigger utility logic
-        FocusModeUtil.startDeepFocus(appContext, appsToLock)
-
-        val updatedFrozenMap = FrozenAppsStore.getFrozenApps(appContext)
-        _uiState.update {
-            it.copy(
-                isFocusActive = true,
-                frozenAppsMap = updatedFrozenMap
-            )
-        }
-
-        if (!AccessibilityPermission.isAppBlockerEnabled(appContext)) {
-            AccessibilityPermission.openAccessibilitySettings(appContext)
+        focusTimerJob?.cancel()
+        focusTimerJob = viewModelScope.launch {
+            while (_uiState.value.focusTimeRemainingSeconds > 0) {
+                kotlinx.coroutines.delay(1000L)
+                _uiState.update { state ->
+                    val nextTime = state.focusTimeRemainingSeconds - 1
+                    if (nextTime <= 0) {
+                        state.copy(isFocusActive = false, focusTimeRemainingSeconds = 0)
+                    } else {
+                        state.copy(focusTimeRemainingSeconds = nextTime)
+                    }
+                }
+            }
         }
     }
+
     fun stopDeepFocusMode(context: Context) {
         val appContext = context.applicationContext
         FocusModeUtil.stopDeepFocus(appContext)
