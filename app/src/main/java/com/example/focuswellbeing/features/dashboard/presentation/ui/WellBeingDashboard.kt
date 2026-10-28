@@ -101,7 +101,8 @@ fun WellBeingDashboard(
                             onClick = {
                                 datePickerState.selectedDateMillis?.let { millis ->
                                     val currentTime = System.currentTimeMillis()
-                                    val validMillis = if (millis > currentTime) currentTime else millis
+                                    val validMillis =
+                                        if (millis > currentTime) currentTime else millis
                                     viewModel.updateDailyAnchor(context, validMillis)
                                 }
                                 showDatePicker = false
@@ -187,70 +188,17 @@ fun WellBeingDashboard(
                     }
                 }
             }
-
-            // Sub-Filter Header Controls (Calendar Picker or Week Offset Switcher with strict future restriction)
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                when (state.selectedTab) {
-                    0 -> {
-                        OutlinedButton(
-                            onClick = { showDatePicker = true },
-                            shape = RoundedCornerShape(12.dp)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.DateRange,
-                                contentDescription = "Pick Date",
-                                modifier = Modifier.size(18.dp)
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Text(state.formattedDailyDate, fontSize = 13.sp) // Clean and formatted in ViewModel!
-                        }
-                    }
-                    else -> {
-                        // Weekly view: Range selector switcher with strict month comparison
-                        val targetCalendar = Calendar.getInstance().apply { add(Calendar.MONTH, selectedMonthOffset) }
-                        val monthLabel = SimpleDateFormat("MMMM yyyy", Locale.getDefault()).format(targetCalendar.time)
-
-                        // Check if the target month is strictly before the current month/year
-                        val currentCalendar = Calendar.getInstance()
-                        val canGoForward = targetCalendar.get(Calendar.YEAR) < currentCalendar.get(Calendar.YEAR) ||
-                                (targetCalendar.get(Calendar.YEAR) == currentCalendar.get(Calendar.YEAR) &&
-                                        targetCalendar.get(Calendar.MONTH) < currentCalendar.get(Calendar.MONTH))
-
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            IconButton(onClick = {
-                                selectedMonthOffset--
-                                viewModel.shiftWeeklyOffset(context, -1)
-                            }) {
-                                Icon(Icons.Default.KeyboardArrowLeft, contentDescription = "Previous Period")
-                            }
-
-                            Text(monthLabel, fontWeight = FontWeight.SemiBold, fontSize = 14.sp)
-
-                            IconButton(
-                                onClick = {
-                                    if (canGoForward) {
-                                        selectedMonthOffset++
-                                        viewModel.shiftWeeklyOffset(context, 1)
-                                    }
-                                },
-                                enabled = canGoForward
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.KeyboardArrowRight,
-                                    contentDescription = "Next Period",
-                                    tint = if (canGoForward) LocalContentColor.current else LocalContentColor.current.copy(alpha = 0.38f)
-                                )
-                            }
-                        }
-                    }
+            VisualAnalytics(
+                state = state,
+                selectedTab = state.selectedTab,
+                formattedDailyDate = state.formattedDailyDate,
+                onPickDateClick = { showDatePicker = true },
+                selectedMonthOffset = selectedMonthOffset,
+                onMonthOffsetChanged = { offsetDelta ->
+                    selectedMonthOffset += offsetDelta
+                    viewModel.shiftWeeklyOffset(context, offsetDelta)
                 }
-            }
-
-            VisualAnalytics(state)
+            )
             ActivateFocusCard(state, viewModel)
         }
     }

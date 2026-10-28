@@ -30,16 +30,24 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.focuswellbeing.features.dashboard.presentation.viewModel.AnalyticsUiState
+import com.example.focuswellbeing.features.dashboard.presentation.ui.DashboardDateFilterWidget
 import com.example.focuswellbeing.ui.theme.*;
 
 @Composable
-fun VisualAnalytics(state: AnalyticsUiState) {
+fun VisualAnalytics(
+    state: AnalyticsUiState,
+    selectedTab: Int,
+    formattedDailyDate: String,
+    onPickDateClick: () -> Unit,
+    selectedMonthOffset: Int,
+    onMonthOffsetChanged: (Int) -> Unit,
+) {
     val maxVal = state.chartData.maxOfOrNull { it.hours } ?: 1f
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -74,6 +82,7 @@ fun VisualAnalytics(state: AnalyticsUiState) {
                         color = MaterialTheme.colorScheme.onSurface
                     )
                     Spacer(modifier = Modifier.height(8.dp))
+                    // 👉 Placed right beside the metrics display
 
                     // Trend Pill
                     Surface(
@@ -95,7 +104,15 @@ fun VisualAnalytics(state: AnalyticsUiState) {
                             )
                         }
                     }
+
                 }
+                DashboardDateFilterWidget(
+                    selectedTab = selectedTab,
+                    formattedDailyDate = formattedDailyDate,
+                    onPickDateClick = onPickDateClick,
+                    selectedMonthOffset = selectedMonthOffset,
+                    onMonthOffsetChanged = onMonthOffsetChanged
+                )
             }
 
             Spacer(modifier = Modifier.height(20.dp))

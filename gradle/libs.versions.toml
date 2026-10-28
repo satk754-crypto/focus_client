@@ -9,6 +9,7 @@ lifecycle = "2.9.4"
 activityCompose = "1.11.0"
 composeBom = "2024.09.00"
 processorAnnotationsJvm = "202411.1"
+uiText = "1.12.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -33,6 +34,7 @@ androidx-compose-foundation-layout = { group = "androidx.compose.foundation", na
 androidx-compose-ui-text = { group = "androidx.compose.ui", name = "ui-text" }
 androidx-compose-material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended" }
 processor-annotations-jvm = { group = "com.android.identity", name = "processor-annotations-jvm", version.ref = "processorAnnotationsJvm" }
+androidx-ui-text = { group = "androidx.compose.ui", name = "ui-text", version.ref = "uiText" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
