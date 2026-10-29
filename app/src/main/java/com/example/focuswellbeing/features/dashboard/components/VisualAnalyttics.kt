@@ -13,9 +13,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -36,7 +34,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.focuswellbeing.features.dashboard.presentation.ui.DashboardDateFilterWidget
 import com.example.focuswellbeing.features.dashboard.presentation.viewModel.AnalyticsUiState
-import com.example.focuswellbeing.ui.theme.*;
+import com.example.focuswellbeing.ui.theme.DividerSubtle
+import com.example.focuswellbeing.ui.theme.IndigoDark
+import com.example.focuswellbeing.ui.theme.IndigoLight
+import com.example.focuswellbeing.ui.theme.IndigoPrimary
+import com.example.focuswellbeing.ui.theme.SuccessGreen
+import com.example.focuswellbeing.ui.theme.SuccessGreenLight
 
 @Composable
 fun VisualAnalytics(
