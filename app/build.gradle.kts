@@ -59,6 +59,8 @@ dependencies {
     implementation(libs.androidx.compose.material.icons.extended)
     implementation(libs.processor.annotations.jvm)
     implementation(libs.androidx.compose.foundation.layout)
+    implementation(libs.androidx.navigation.compose)
+    implementation(project(":music"))
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -68,13 +70,17 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 }
 
-// Keep Lifecycle on 2.9.x — 2.11.0 needs AGP 9.1 + compileSdk 37.
+// Keep Lifecycle/Navigation on 2.9.x — newer lines need AGP 9.1 + compileSdk 37.
 configurations.configureEach {
     resolutionStrategy {
         eachDependency {
             if (requested.group == "androidx.lifecycle") {
                 useVersion(libs.versions.lifecycle.get())
                 because("Lifecycle 2.11 requires AGP 9.1 / compileSdk 37")
+            }
+            if (requested.group == "androidx.navigation") {
+                useVersion(libs.versions.navigationCompose.get())
+                because("Navigation 2.10 requires AGP 9.1 / compileSdk 37")
             }
         }
     }
