@@ -1,7 +1,7 @@
 package com.example.focuswellbeing.utils
 
 import android.content.Context
-import kotlinx.coroutines.flow.update
+import androidx.core.content.edit
 
 /**
  * Persists frozen package names so both the UI and [AppBlockerService]
@@ -18,7 +18,7 @@ object FrozenAppsStore {
 
     fun setFrozenApps(context: Context, packages: Set<String>) {
         val prefs = context.applicationContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-        prefs.edit().putStringSet(KEY_FROZEN, packages.toSet()).apply()
+        prefs.edit { putStringSet(KEY_FROZEN, packages.toSet()) }
     }
 
     fun toggle(context: Context, packageName: String): Set<String> {

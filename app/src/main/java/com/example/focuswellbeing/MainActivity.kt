@@ -64,7 +64,6 @@ class MainActivity : ComponentActivity() {
         super.onResume()
         wellbeingViewModel.syncFrozenApps(applicationContext)
     }
-
     @SuppressLint("UnspecifiedRegisterReceiverFlag")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
