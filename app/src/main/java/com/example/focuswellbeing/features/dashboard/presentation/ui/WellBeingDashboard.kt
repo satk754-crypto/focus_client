@@ -22,8 +22,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -38,13 +36,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import com.example.focuswellbeing.features.dashboard.components.TopUsedApplication
 import com.example.focuswellbeing.features.dashboard.components.VisualAnalytics
 import com.example.focuswellbeing.features.dashboard.presentation.viewModel.WellbeingViewModel
-import com.example.focuswellbeing.features.focus.presentation.ui.FocusSessionBanner
+import com.example.focuswellbeing.features.focus.presentation.ui.CenterFocusButton
 import com.example.focuswellbeing.ui.theme.DividerSubtle
 import com.example.focuswellbeing.ui.theme.IndigoPrimary
 import java.util.Calendar
@@ -140,14 +137,6 @@ fun WellBeingDashboard(
     }
 
     Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Analytics Suite", fontWeight = FontWeight.Bold, fontSize = 16.sp) },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.background
-                )
-            )
-        },
         containerColor = MaterialTheme.colorScheme.background
     ) { paddingValues ->
         Column(
@@ -158,16 +147,6 @@ fun WellBeingDashboard(
                 .padding(horizontal = 20.dp, vertical = 12.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            FocusSessionBanner(
-                isFocusActive = state.isFocusActive,
-                remainingSeconds = state.focusTimeRemainingSeconds,
-                onStartFocus = { minutes ->
-                    viewModel.startFocusSession(minutes)
-                },
-                onStopFocus = {
-                    viewModel.stopDeepFocusMode(context);
-                }
-            )
             // Segmented Interactive Pill Tabs (Daily / Weekly)
             Surface(
                 modifier = Modifier.fillMaxWidth(),
@@ -181,7 +160,8 @@ fun WellBeingDashboard(
                 ) {
                     tabs.forEachIndexed { index, title ->
                         val isSelected = state.selectedTab == index
-                        val backgroundColor = if (isSelected) IndigoPrimary else Color.Transparent
+                        val backgroundColor =
+                            if (isSelected) IndigoPrimary else Color.Transparent
                         val textColor =
                             if (isSelected) Color.White else MaterialTheme.colorScheme.onSurfaceVariant
 
@@ -204,6 +184,7 @@ fun WellBeingDashboard(
                     }
                 }
             }
+
             VisualAnalytics(
                 state = state,
                 selectedTab = state.selectedTab,
@@ -215,6 +196,16 @@ fun WellBeingDashboard(
                     viewModel.shiftWeeklyOffset(context, offsetDelta)
                 }
             )
+
+            CenterFocusButton(
+                isFocusActive = state.isFocusActive,
+                remainingSeconds = state.focusTimeRemainingSeconds,
+                onStartFocus = { minutes ->
+                    viewModel.startFocusSession(context, minutes)
+                },
+                onStopFocus = { viewModel.stopDeepFocusMode(context) }
+            )
+
             TopUsedApplication(state, viewModel)
         }
     }

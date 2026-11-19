@@ -11,6 +11,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import com.example.focuswellbeing.features.appblock.prensentation.ui.AppBlockOverlay
 import com.example.focuswellbeing.ui.theme.FocusWellbeingTheme
+import com.example.focuswellbeing.utils.FocusModeUtil
 import com.example.focuswellbeing.utils.FrozenAppsStore
 
 class ShieldActivity : ComponentActivity() {
@@ -35,9 +36,12 @@ class ShieldActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
+                    val focusSessionActive = FocusModeUtil.isFocusActive(this)
                     AppBlockOverlay(
                         appName = resolveAppName(blockedPackage),
+                        allowUnfreeze = !focusSessionActive,
                         onUnfreezeClick = {
+                            if (FocusModeUtil.isFocusActive(this)) return@AppBlockOverlay
                             FrozenAppsStore.unfreeze(this, blockedPackage)
                             // Notify dashboard if it is alive
                             sendBroadcast(

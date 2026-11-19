@@ -47,7 +47,6 @@ import com.example.focuswellbeing.features.auth.ui.LoginScreen
 import com.example.focuswellbeing.features.dashboard.presentation.ui.ShieldActivity
 import com.example.focuswellbeing.features.dashboard.presentation.ui.WellBeingDashboard
 import com.example.focuswellbeing.features.dashboard.presentation.viewModel.WellbeingViewModel
-import com.example.focuswellbeing.features.navigation.ui.AppBottomBar
 import com.example.focuswellbeing.model.Screen
 import com.example.focuswellbeing.ui.theme.FocusWellbeingTheme
 import com.example.focuswellbeing.utils.AppMonitoringUtils
@@ -141,17 +140,12 @@ class MainActivity : ComponentActivity() {
                             onDismiss = { showFocusDialog = false },
                             onSelectDuration = { totalMins ->
                                 showFocusDialog = false
-                                wellbeingViewModel.startFocusSession(totalMins)
+                                wellbeingViewModel.startFocusSession(context, totalMins)
                             }
                         )
                     }
 
                     Scaffold(
-                        bottomBar = {
-                            AppBottomBar(
-                                navController = navController,
-                            )
-                        },
                     ) { innerPadding ->
                         Box(
                             modifier = Modifier

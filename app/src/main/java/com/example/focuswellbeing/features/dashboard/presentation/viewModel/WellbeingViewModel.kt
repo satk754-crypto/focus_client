@@ -153,6 +153,9 @@ class WellbeingViewModel : ViewModel() {
     }
 
     fun toggleFreezeApp(context: Context, packageName: String) {
+        // Manual freeze toggles are locked while a focus session is running.
+        if (_uiState.value.isFocusActive) return
+
         val appContext = context.applicationContext
         val wasFrozen = FrozenAppsStore.isFrozen(appContext, packageName)
         val updatedSet = FrozenAppsStore.toggle(appContext, packageName)
@@ -163,39 +166,66 @@ class WellbeingViewModel : ViewModel() {
             AccessibilityPermission.openAccessibilitySettings(appContext)
         }
     }
-    // Inside your WellbeingViewModel.kt
+
     private var focusTimerJob: kotlinx.coroutines.Job? = null
-    // 👉 Add custom duration support
-    fun startFocusSession(durationMinutes: Int) {
+
+    /**
+     * Starts a timed focus session: freezes all launchable apps and blocks
+     * in-app controls until the timer ends or the user stops early.
+     */
+    fun startFocusSession(context: Context, durationMinutes: Int) {
+        if (durationMinutes <= 0) return
+
+        val appContext = context.applicationContext
+        if (!AccessibilityPermission.isAppBlockerEnabled(appContext)) {
+            AccessibilityPermission.openAccessibilitySettings(appContext)
+        }
+
+        FocusModeUtil.startDeepFocus(appContext)
         val totalSeconds = durationMinutes * 60
-        _uiState.update { it.copy(isFocusActive = true, focusTimeRemainingSeconds = totalSeconds) }
+        _uiState.update {
+            it.copy(
+                isFocusActive = true,
+                focusTimeRemainingSeconds = totalSeconds,
+                frozenAppsMap = FrozenAppsStore.getFrozenApps(appContext)
+            )
+        }
 
         focusTimerJob?.cancel()
         focusTimerJob = viewModelScope.launch {
             while (_uiState.value.focusTimeRemainingSeconds > 0) {
                 kotlinx.coroutines.delay(1000L)
-                _uiState.update { state ->
-                    val nextTime = state.focusTimeRemainingSeconds - 1
-                    if (nextTime <= 0) {
-                        state.copy(isFocusActive = false, focusTimeRemainingSeconds = 0)
-                    } else {
-                        state.copy(focusTimeRemainingSeconds = nextTime)
+                val nextTime = _uiState.value.focusTimeRemainingSeconds - 1
+                if (nextTime <= 0) {
+                    FocusModeUtil.stopDeepFocus(appContext)
+                    FrozenAppsStore.clearAll(appContext)
+                    _uiState.update {
+                        it.copy(
+                            isFocusActive = false,
+                            focusTimeRemainingSeconds = 0,
+                            frozenAppsMap = emptySet()
+                        )
                     }
+                } else {
+                    _uiState.update { it.copy(focusTimeRemainingSeconds = nextTime) }
                 }
             }
         }
     }
 
     fun stopDeepFocusMode(context: Context) {
+        focusTimerJob?.cancel()
+        focusTimerJob = null
+
         val appContext = context.applicationContext
         FocusModeUtil.stopDeepFocus(appContext)
-
-        val updatedFrozenMap = FrozenAppsStore.getFrozenApps(appContext)
+        FrozenAppsStore.clearAll(appContext)
 
         _uiState.update {
             it.copy(
                 isFocusActive = false,
-                frozenAppsMap = updatedFrozenMap
+                focusTimeRemainingSeconds = 0,
+                frozenAppsMap = emptySet()
             )
         }
     }

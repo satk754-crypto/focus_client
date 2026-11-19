@@ -18,7 +18,12 @@ object FrozenAppsStore {
 
     fun setFrozenApps(context: Context, packages: Set<String>) {
         val prefs = context.applicationContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        // Always write a fresh copy — SharedPreferences can ignore in-place StringSet mutations.
         prefs.edit { putStringSet(KEY_FROZEN, packages.toSet()) }
+    }
+
+    fun clearAll(context: Context) {
+        setFrozenApps(context, emptySet())
     }
 
     fun toggle(context: Context, packageName: String): Set<String> {

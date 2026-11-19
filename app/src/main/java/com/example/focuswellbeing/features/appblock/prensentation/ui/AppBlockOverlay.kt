@@ -20,7 +20,8 @@ import com.example.focuswellbeing.ui.theme.FocusBlue
 fun AppBlockOverlay(
     appName: String,
     onUnfreezeClick: () -> Unit,
-    onDismissClick: () -> Unit
+    onDismissClick: () -> Unit,
+    allowUnfreeze: Boolean = true
 ) {
     // Semi-transparent dark backdrop (PhonePe security overlay style)
     Box(
@@ -66,7 +67,11 @@ fun AppBlockOverlay(
 
                 // Subtitle description
                 Text(
-                    text = "This app is currently locked under Focus Mode to help you stay productive and avoid distractions.",
+                    text = if (allowUnfreeze) {
+                        "This app is currently locked under Focus Mode to help you stay productive and avoid distractions."
+                    } else {
+                        "A timed focus session is active. This app stays locked until the session ends — unfreeze is disabled."
+                    },
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = TextAlign.Center
@@ -74,21 +79,23 @@ fun AppBlockOverlay(
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                // Primary Action: Unfreeze & Open
-                Button(
-                    onClick = onUnfreezeClick,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(50.dp),
-                    shape = RoundedCornerShape(14.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = FocusBlue)
-                ) {
-                    Text(
-                        text = "Unfreeze & Open App",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.White
-                    )
+                if (allowUnfreeze) {
+                    // Primary Action: Unfreeze & Open
+                    Button(
+                        onClick = onUnfreezeClick,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(50.dp),
+                        shape = RoundedCornerShape(14.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = FocusBlue)
+                    ) {
+                        Text(
+                            text = "Unfreeze & Open App",
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White
+                        )
+                    }
                 }
 
                 // Secondary Action: Stay Focused (Dismiss / Go Back)
@@ -97,7 +104,7 @@ fun AppBlockOverlay(
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(
-                        text = "Keep Locked",
+                        text = if (allowUnfreeze) "Keep Locked" else "Stay Focused",
                         fontSize = 14.sp,
                         fontWeight = FontWeight.SemiBold,
                         color = MaterialTheme.colorScheme.onSurfaceVariant

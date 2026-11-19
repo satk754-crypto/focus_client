@@ -19,7 +19,6 @@ import com.example.focuswellbeing.model.Screen
 fun AppBottomBar(navController: NavController) {
     val items = listOf(
         Screen.Focus,
-        Screen.Health,
         Screen.WalkingTrack,
         Screen.Music
     )
@@ -27,7 +26,7 @@ fun AppBottomBar(navController: NavController) {
     NavigationBar(
         containerColor = MaterialTheme.colorScheme.surface,
         tonalElevation = 8.dp,
-        modifier = Modifier.height(72.dp)
+        modifier = Modifier.height(80.dp)
     ) {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentRoute = navBackStackEntry?.destination?.route

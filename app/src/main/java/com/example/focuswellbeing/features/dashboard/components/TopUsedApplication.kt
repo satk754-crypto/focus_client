@@ -169,19 +169,22 @@ fun TopUsedApplication(state: AnalyticsUiState, viewModel: WellbeingViewModel) {
                             }
                         }
 
-                        // Freeze / Unfreeze Button
+                        // Freeze / Unfreeze Button (locked during timed focus sessions)
                         Button(
                             onClick = { viewModel.toggleFreezeApp(context, app.packageName) },
+                            enabled = !state.isFocusActive,
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = if (isFrozen) FocusBlue.copy(alpha = 0.2f) else MaterialTheme.colorScheme.surface,
-                                contentColor = if (isFrozen) FocusBlueLight else FocusBlue
+                                contentColor = if (isFrozen) FocusBlueLight else FocusBlue,
+                                disabledContainerColor = FocusBlue.copy(alpha = 0.12f),
+                                disabledContentColor = FocusBlueLight.copy(alpha = 0.55f)
                             ),
                             contentPadding = PaddingValues(horizontal = 10.dp, vertical = 4.dp),
                             modifier = Modifier.height(28.dp),
                             shape = RoundedCornerShape(6.dp)
                         ) {
                             Text(
-                                text = if (isFrozen) "Unfreeze" else "Freeze",
+                                text = if (state.isFocusActive) "Locked" else if (isFrozen) "Unfreeze" else "Freeze",
                                 fontSize = 10.sp,
                                 fontWeight = FontWeight.Bold,
                             )
